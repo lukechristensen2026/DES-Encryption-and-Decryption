@@ -12,10 +12,30 @@
 
 
 #include <iostream>
+#include <bitset>
+#include <fstream>
+#include <string>
+#include "functions.hpp"
 
 using namespace std;
 
 int main() {
+    ifstream inputFile("testinput.txt");
+    ofstream outputFile("output.txt");
+
+    string binaryInput;
+    inputFile >> binaryInput;
+
+    bitset<32> inputBits(binaryInput);
+    //
+    unsigned int testText = static_cast<unsigned int>(inputBits.to_ulong());
+    bitset<48> outputBits = apply_expansion(testText);
+
+    outputFile << "Initial Text: " << inputBits << endl;
+    outputFile << "Text After Expansion Permutation E: " << outputBits << endl;
+
+    inputFile.close();
+    outputFile.close();
 
     cout << "yo" << endl;
     return 0;
