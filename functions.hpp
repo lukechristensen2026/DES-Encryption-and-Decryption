@@ -19,7 +19,7 @@ const int ExpandedSet[48] = {
 };
 
 
-inline bitset<48> expansionPermutationE(unsigned int inputValue) {
+bitset<48> expansionPermutationE(int inputValue) {
     bitset<32> inputBits(inputValue);
     bitset<48> result;
 
@@ -31,6 +31,24 @@ inline bitset<48> expansionPermutationE(unsigned int inputValue) {
 }
 
 //XOR with a round key
+bitset<48> xorWithRoundKey(const bitset<48> expandedInput, const bitset<48> roundKey) {
+    bitset<48> result;
+
+    for (int i = 0; i < 48; i++) {
+        bool bit1 = expandedInput[i];
+        bool bit2 = roundKey[i];
+
+        if ((bit1 && !bit2) || (!bit1 && bit2)) {
+            result[i] = 1;
+        } else {
+            result[i] = 0;
+        }
+    }
+
+    return result;
+}
+
+
 //S-boxes
 //Permutation P
 

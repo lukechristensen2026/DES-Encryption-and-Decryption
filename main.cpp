@@ -23,17 +23,20 @@ int main() {
     ifstream inputFile("testinput.txt");
     ofstream outputFile("output.txt");
 
-    string binaryInput;
-    inputFile >> binaryInput;
+    string binaryInput, binaryInput2;
+    inputFile >> binaryInput >> binaryInput2;
 
     bitset<32> inputBits(binaryInput);
     //
-    //unsigned int testText = static_cast<unsigned int>(inputBits.to_ulong());
-    unsigned long testText = inputBits.to_ulong();
+    long testText = inputBits.to_ulong();
     bitset<48> outputBits = expansionPermutationE(testText);
+
+    long roundKey = inputBits.to_ulong();
+    bitset<48> outputBits2 = xorWithRoundKey(outputBits, roundKey);
 
     outputFile << "Initial Text: " << inputBits << endl;
     outputFile << "Text After Expansion Permutation E: " << outputBits << endl;
+    outputFile << "Text After Expansion Permutation E and XOR: " << outputBits2 << endl;
 
     inputFile.close();
     outputFile.close();
