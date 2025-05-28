@@ -7,7 +7,7 @@
 using namespace std;
 
 //Expansion Permutation E
-const int E[48] = {
+const int ExpandedSet[48] = {
     32,1,2,3,4,5,
     4,5,6,7,8,9,
     8,9,10,11,12,13,
@@ -19,12 +19,12 @@ const int E[48] = {
 };
 
 
-inline bitset<48> apply_expansion(unsigned int R) {
-    bitset<32> inputBits(R);
+inline bitset<48> expansionPermutationE(unsigned int inputValue) {
+    bitset<32> inputBits(inputValue);
     bitset<48> result;
 
     for (int i = 0; i < 48; i++) {
-        result[47 - i] = inputBits[32 - E[i]];
+        result[47 - i] = inputBits[32 - ExpandedSet[i]];
     }
 
     return result;

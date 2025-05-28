@@ -30,7 +30,7 @@ int main() {
     //
     //unsigned int testText = static_cast<unsigned int>(inputBits.to_ulong());
     unsigned long testText = inputBits.to_ulong();
-    bitset<48> outputBits = apply_expansion(testText);
+    bitset<48> outputBits = expansionPermutationE(testText);
 
     outputFile << "Initial Text: " << inputBits << endl;
     outputFile << "Text After Expansion Permutation E: " << outputBits << endl;
