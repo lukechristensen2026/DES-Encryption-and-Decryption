@@ -23,20 +23,49 @@ int main() {
     ifstream inputFile("testinput.txt");
     ofstream outputFile("output.txt");
 
-    string binaryInput, binaryInput2;
-    inputFile >> binaryInput >> binaryInput2;
+    string binaryInput, binaryKey;
+    inputFile >> binaryInput >> binaryKey;
 
-    bitset<32> inputBits(binaryInput);
-    //
-    long testText = inputBits.to_ulong();
+    cout << "Read input: " << binaryInput << endl;
+    cout << "Read key:   " << binaryKey << endl;
+
+    bitset<64> inputBits(binaryInput);
+    bitset<64> inputKey(binaryKey);
+
+    bitset<56> actualKey;
+    int j = 55;
+    for (int i = 63; i >= 0; i--) {
+        if ((i % 8) != 0) {
+            actualKey[j--] = inputKey[i];
+        }
+    }
+
+    cout << "Bitset<64> inputBits: " << inputBits << endl;
+    cout << "Bitset<64> fullKey:   " << inputKey << endl;
+    cout << "Bitset<56> strippedKey: " << actualKey << endl;
+
+
+
+    //dont know how much of this test output stuff we need to keep so im leaving it for now
+    unsigned long long testText = inputBits.to_ullong(); 
+
     bitset<48> outputBits = expansionPermutationE(testText);
-
-    long roundKey = inputBits.to_ulong();
+    long roundKey = inputBits.to_ullong();
     bitset<48> outputBits2 = xorWithRoundKey(outputBits, roundKey);
+    
+
+    
+    bitset<64> ciphertext = DES0(inputBits, actualKey);
+
+
+ 
+
 
     outputFile << "Initial Text: " << inputBits << endl;
+    outputFile << "Key: " << actualKey << endl;
     outputFile << "Text After Expansion Permutation E: " << outputBits << endl;
     outputFile << "Text After Expansion Permutation E and XOR: " << outputBits2 << endl;
+    outputFile << "Ciphertext: " << ciphertext << endl;
 
     inputFile.close();
     outputFile.close();
