@@ -169,6 +169,24 @@ bitset<32> fFunction(bitset<32> R, bitset<48> roundKey) {
     bitset<32> sboxOut = applySBoxes(xored);
     return permutationP(sboxOut);
 }
+bitset<32> fFunction1(bitset<32> R, bitset<48> roundKey) {
+    bitset<48> expanded = expansionPermutationE(R.to_ulong());
+    //bitset<48> xored = xorWithRoundKey(expanded, roundKey);
+    bitset<32> sboxOut = applySBoxes(xored);
+    return permutationP(sboxOut);
+}
+bitset<32> fFunction2(bitset<32> R, bitset<48> roundKey) {
+    bitset<48> expanded = expansionPermutationE(R.to_ulong());
+    bitset<48> xored = xorWithRoundKey(expanded, roundKey);
+    //implement inverse expansion permutation P
+    return expanded;
+}
+bitset<32> fFunction3(bitset<32> R, bitset<48> roundKey) {
+    bitset<48> expanded = expansionPermutationE(R.to_ulong());
+    bitset<48> xored = xorWithRoundKey(expanded, roundKey);
+    bitset<32> sboxOut = applySBoxes(xored);
+    return sboxOut;
+}
 //this is the scaffold for the main function
 
 //I, going to explain this function because its not very clear
@@ -183,6 +201,60 @@ bitset<64> DES0(bitset<64> input, bitset<56> key) {
     for (int round = 0; round < 16; round++) {
         bitset<32> tempR = R;
         R = L ^ fFunction(R, roundKeys[round]);
+        L = tempR;
+    }// Loops around 16 times and does the XOR sbox pPermutation evaluation.
+
+    bitset<64> combined = (L.to_ullong() << 32) | R.to_ullong(); //2 halves recombined and outputted
+    return combined;
+}
+
+bitset<64> DES1(bitset<64> input, bitset<56> key) {
+    bitset<32> L = input.to_ullong() >> 32;
+    bitset<32> R = input.to_ullong() & 0xFFFFFFFF;
+    //split it into 2 halves
+    vector<bitset<48>> roundKeys = generateRoundKeys(key);
+    //generate the 16 round keys , hese come from the key
+
+
+    for (int round = 0; round < 16; round++) {
+        bitset<32> tempR = R;
+        R = L ^ fFunction1(R, roundKeys[round]);
+        L = tempR;
+    }// Loops around 16 times and does the XOR sbox pPermutation evaluation.
+
+    bitset<64> combined = (L.to_ullong() << 32) | R.to_ullong(); //2 halves recombined and outputted
+    return combined;
+}
+
+bitset<64> DES2(bitset<64> input, bitset<56> key) {
+    bitset<32> L = input.to_ullong() >> 32;
+    bitset<32> R = input.to_ullong() & 0xFFFFFFFF;
+    //split it into 2 halves
+    vector<bitset<48>> roundKeys = generateRoundKeys(key);
+    //generate the 16 round keys , hese come from the key
+
+
+    for (int round = 0; round < 16; round++) {
+        bitset<32> tempR = R;
+        R = L ^ fFunction2(R, roundKeys[round]);
+        L = tempR;
+    }// Loops around 16 times and does the XOR sbox pPermutation evaluation.
+
+    bitset<64> combined = (L.to_ullong() << 32) | R.to_ullong(); //2 halves recombined and outputted
+    return combined;
+}
+
+bitset<64> DES3(bitset<64> input, bitset<56> key) {
+    bitset<32> L = input.to_ullong() >> 32;
+    bitset<32> R = input.to_ullong() & 0xFFFFFFFF;
+    //split it into 2 halves
+    vector<bitset<48>> roundKeys = generateRoundKeys(key);
+    //generate the 16 round keys , hese come from the key
+
+
+    for (int round = 0; round < 16; round++) {
+        bitset<32> tempR = R;
+        R = L ^ fFunction3(R, roundKeys[round]);
         L = tempR;
     }// Loops around 16 times and does the XOR sbox pPermutation evaluation.
 

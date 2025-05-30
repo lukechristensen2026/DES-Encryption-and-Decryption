@@ -73,10 +73,24 @@ int main() {
 
     outputFile << "Initial Text:         " << inputBits << endl;
     outputFile << "Key:                  " << actualKey << endl;
+    outputFile << " " << endl;
+    outputFile << "DES0" << endl;
     outputFile << "Ciphertext P and K:   " << ciphertext << endl;
     outputFile << "Ciphertext P' and K:  " << ciphertext2 << endl;
     outputFile << "Ciphertext P and K':  " << ciphertext3 << endl;
     outputFile << "Ciphertext P' and K': " << ciphertext4 << endl;
+    outputFile << " " << endl;
+
+    bitset<64> ciphertext5  = DES0(inputBits, actualKey);
+    bitset<64> ciphertext6 = DES0(inputBits2, actualKey);
+    bitset<64> ciphertext7 = DES0(inputBits, actualKey2);
+    bitset<64> ciphertext8 = DES0(inputBits2, actualKey2);
+
+    outputFile << "DES1" << endl;
+    outputFile << "Ciphertext P and K:   " << ciphertext5 << endl;
+    outputFile << "Ciphertext P' and K:  " << ciphertext6 << endl;
+    outputFile << "Ciphertext P and K':  " << ciphertext7 << endl;
+    outputFile << "Ciphertext P' and K': " << ciphertext8 << endl;
 
     inputFile.close();
     outputFile.close();
