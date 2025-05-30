@@ -37,8 +37,14 @@ vector<int> analyzeAvalanche(const vector<bitset<32>>& states1, const vector<bit
 
 int main() {
     try {
-        ifstream inputFile("testinput.txt");
+        ifstream inFile("testinput.txt");
         ofstream outFile("output.txt");
+
+        string line;
+        vector<string> inputs;
+        while (getline(inFile, line) && inputs.size() < 4) {
+            inputs.push_back(line);
+        }
 
         bitset<64> P = readBinaryString(inputs[0]);
         bitset<64> P_prime = readBinaryString(inputs[1]);
@@ -81,12 +87,13 @@ int main() {
 
         outFile << "Round DES0 DES1 DES2 DES3\n";
         for (size_t i = 0; i < 17; i++) {
-            outFile << setw(5) << i << setw(5) << diff_P_DES0[i]
-                   << setw(5) << diff_P_DES1[i]
-                   << setw(5) << diff_P_DES2[i]
-                   << setw(5) << diff_P_DES3[i] << "\n";
+            outFile << i << "\t" << diff_P_DES0[i] << "\t"
+                   << diff_P_DES1[i] << "\t"
+                   << diff_P_DES2[i] << "\t"
+                   << diff_P_DES3[i] << "\n";
         }
         outFile << "\n";
+
 
         vector<bitset<32>> states_P_Kprime;
         vector<bitset<32>> states_P_Kprime1;
@@ -109,14 +116,14 @@ int main() {
 
         outFile << "Round DES0 DES1 DES2 DES3\n";
         for (size_t i = 0; i < 17; i++) {
-            outFile << setw(5) << i << setw(5) << diff_K_DES0[i]
-                   << setw(5) << diff_K_DES1[i]
-                   << setw(5) << diff_K_DES2[i]
-                   << setw(5) << diff_K_DES3[i] << "\n";
+            outFile << i << "\t" << diff_K_DES0[i] << "\t"
+                   << diff_K_DES1[i] << "\t"
+                   << diff_K_DES2[i] << "\t"
+                   << diff_K_DES3[i] << "\n";
         }
 
-        inputFile.close();
-        outputFile.close();
+        inFile.close();
+        outFile.close();
         return 0;
     
     }
