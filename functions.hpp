@@ -97,6 +97,23 @@ bitset<48> expansionPermutationE(int inputValue) {
     return result;
 }
 
+bitset<32> inverseExpansionPermutationE(const bitset<48> input) {
+    bitset<32> output;
+
+    for (int i = 1; i <= 32; i++) {
+        //Finding one of each number from the input
+        //Removing duplicates
+        for (int j = 0; j < 48; j++) {
+            if (ExpandedSet[j] == i) {
+                output[32 - i] = input[47 - j]; // Adjusting bitset index
+                break;
+            }
+        }
+    }
+
+    return output;
+}
+
 //XOR with a round key
 bitset<48> xorWithRoundKey(const bitset<48> expandedInput, const bitset<48> roundKey) {
     bitset<48> result;
@@ -172,15 +189,16 @@ bitset<32> fFunction(bitset<32> R, bitset<48> roundKey) {
 bitset<32> fFunction1(bitset<32> R, bitset<48> roundKey) {
     bitset<48> expanded = expansionPermutationE(R.to_ulong());
     //bitset<48> xored = xorWithRoundKey(expanded, roundKey);
-    bitset<32> sboxOut = applySBoxes(xored);
+    bitset<32> sboxOut = applySBoxes(expanded);
     return permutationP(sboxOut);
 }
+
 bitset<32> fFunction2(bitset<32> R, bitset<48> roundKey) {
     bitset<48> expanded = expansionPermutationE(R.to_ulong());
     bitset<48> xored = xorWithRoundKey(expanded, roundKey);
-    //implement inverse expansion permutation P
-    return expanded;
+    return inverseExpansionPermutationE(xored);
 }
+
 bitset<32> fFunction3(bitset<32> R, bitset<48> roundKey) {
     bitset<48> expanded = expansionPermutationE(R.to_ulong());
     bitset<48> xored = xorWithRoundKey(expanded, roundKey);

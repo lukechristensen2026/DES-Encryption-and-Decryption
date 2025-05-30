@@ -81,16 +81,41 @@ int main() {
     outputFile << "Ciphertext P' and K': " << ciphertext4 << endl;
     outputFile << " " << endl;
 
-    bitset<64> ciphertext5  = DES0(inputBits, actualKey);
-    bitset<64> ciphertext6 = DES0(inputBits2, actualKey);
-    bitset<64> ciphertext7 = DES0(inputBits, actualKey2);
-    bitset<64> ciphertext8 = DES0(inputBits2, actualKey2);
+    bitset<64> ciphertext5  = DES1(inputBits, actualKey);
+    bitset<64> ciphertext6 = DES1(inputBits2, actualKey);
+    bitset<64> ciphertext7 = DES1(inputBits, actualKey2);
+    bitset<64> ciphertext8 = DES1(inputBits2, actualKey2);
 
     outputFile << "DES1" << endl;
     outputFile << "Ciphertext P and K:   " << ciphertext5 << endl;
     outputFile << "Ciphertext P' and K:  " << ciphertext6 << endl;
     outputFile << "Ciphertext P and K':  " << ciphertext7 << endl;
     outputFile << "Ciphertext P' and K': " << ciphertext8 << endl;
+    outputFile << " " << endl;
+
+    bitset<64> ciphertext9  = DES2(inputBits, actualKey);
+    bitset<64> ciphertext10 = DES2(inputBits2, actualKey);
+    bitset<64> ciphertext11 = DES2(inputBits, actualKey2);
+    bitset<64> ciphertext12 = DES2(inputBits2, actualKey2);
+
+    outputFile << "DES2" << endl;
+    outputFile << "Ciphertext P and K:   " << ciphertext9 << endl;
+    outputFile << "Ciphertext P' and K:  " << ciphertext10 << endl;
+    outputFile << "Ciphertext P and K':  " << ciphertext11 << endl;
+    outputFile << "Ciphertext P' and K': " << ciphertext12 << endl;
+    outputFile << " " << endl;
+
+    bitset<64> ciphertext13  = DES3(inputBits, actualKey);
+    bitset<64> ciphertext14 = DES3(inputBits2, actualKey);
+    bitset<64> ciphertext15 = DES3(inputBits, actualKey2);
+    bitset<64> ciphertext16 = DES3(inputBits2, actualKey2);
+
+    outputFile << "DES3" << endl;
+    outputFile << "Ciphertext P and K:   " << ciphertext13 << endl;
+    outputFile << "Ciphertext P' and K:  " << ciphertext14 << endl;
+    outputFile << "Ciphertext P and K':  " << ciphertext15 << endl;
+    outputFile << "Ciphertext P' and K': " << ciphertext16 << endl;
+    outputFile << " " << endl;
 
     inputFile.close();
     outputFile.close();
