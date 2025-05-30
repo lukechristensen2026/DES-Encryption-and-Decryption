@@ -24,7 +24,7 @@ int main() {
     ofstream outputFile("output.txt");
 
     string binaryInput, binaryInput2, binaryKey, binaryKey2;
-    inputFile >> binaryInput >> binaryKey;
+    inputFile >> binaryInput binaryInput2 >> binaryKey >> binaryKey2;
 
     cout << "Read input Plaintext P:  " << binaryInput << endl;
     cout << "Read input Plaintext P': " << binaryInput2 << endl;
