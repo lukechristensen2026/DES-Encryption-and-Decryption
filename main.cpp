@@ -19,106 +19,115 @@
 
 using namespace std;
 
+bitset<64> readBinaryString(const string& str) {
+    if (str.length() != 64) {
+        throw runtime_error("Input string must be 64 bits long");
+    }
+    return bitset<64>(str);
+}
+
+vector<int> analyzeAvalanche(const vector<bitset<32>>& states1, const vector<bitset<32>>& states2) {
+    vector<int> differences;
+    for (size_t i = 0; i < states1.size(); i++) {
+        differences.push_back(countDifferingBits(states1[i], states2[i]));
+    }
+    return differences;
+}
+
 int main() {
-    ifstream inputFile("testinput.txt");
-    ofstream outputFile("output.txt");
+    try {
+        ifstream inFile("input.txt");
+        ofstream outFile("output.txt");
 
-    string binaryInput, binaryInput2, binaryKey, binaryKey2;
-    inputFile >> binaryInput >> binaryInput2 >> binaryKey >> binaryKey2;
-
-    cout << "Read input Plaintext P:  " << binaryInput << endl;
-    cout << "Read input Plaintext P': " << binaryInput2 << endl;
-    cout << "Read key K:              " << binaryKey << endl;
-    cout << "Read key K':             " << binaryKey2 << endl;
-
-    bitset<64> inputBits(binaryInput);
-    bitset<64> inputBits2(binaryInput2);
-
-    bitset<64> inputKey(binaryKey);
-    bitset<64> inputKey2(binaryKey2);
-
-    bitset<56> actualKey;
-    int j = 55;
-    for (int i = 63; i >= 0; i--) {
-        if ((i % 8) != 0) {
-            actualKey[j--] = inputKey[i];
+        string line;
+        vector<string> inputs;
+        while (getline(inFile, line) && inputs.size() < 4) {
+            inputs.push_back(line);
         }
-    }
 
-    bitset<56> actualKey2;
-    int k = 55;
-    for (int i = 63; i >= 0; i--) {
-        if ((i % 8) != 0) {
-            actualKey2[k--] = inputKey2[i];
+        bitset<64> P = readBinaryString(inputs[0]);
+        bitset<64> P_prime = readBinaryString(inputs[1]);
+        bitset<64> K = readBinaryString(inputs[2]);
+        bitset<64> K_prime = readBinaryString(inputs[3]);
+
+        outFile << "Avalanche Demonstration\n\n";
+        outFile << "Plaintext P: " << P << "\n";
+        outFile << "Plaintext P': " << P_prime << "\n";
+        outFile << "Key K: " << K << "\n";
+        outFile << "Key K': " << K_prime << "\n\n";
+
+        cout << "Bitset<64> inputBits:   " << P << endl;
+        cout << "Bitset<64> fullKey:     " << K << endl;
+
+
+
+         vector<bitset<32>> states_P_K, states_Pprime_K;
+        vector<bitset<32>> states_P_K1, states_Pprime_K1;
+        vector<bitset<32>> states_P_K2, states_Pprime_K2;
+        vector<bitset<32>> states_P_K3, states_Pprime_K3;
+
+        bitset<64> C = DES0(P, K, states_P_K);
+        bitset<64> C_prime = DES0(P_prime, K, states_Pprime_K);
+        DES1(P, K, states_P_K1);
+        DES1(P_prime, K, states_Pprime_K1);
+        DES2(P, K, states_P_K2);
+        DES2(P_prime, K, states_Pprime_K2);
+        DES3(P, K, states_P_K3);
+        DES3(P_prime, K, states_Pprime_K3);
+
+        outFile << "P and P' under K\n";
+        outFile << "Ciphertext C: " << C << "\n";
+        outFile << "Ciphertext C': " << C_prime << "\n\n";
+
+        vector<int> diff_P_DES0 = analyzeAvalanche(states_P_K, states_Pprime_K);
+        vector<int> diff_P_DES1 = analyzeAvalanche(states_P_K1, states_Pprime_K1);
+        vector<int> diff_P_DES2 = analyzeAvalanche(states_P_K2, states_Pprime_K2);
+        vector<int> diff_P_DES3 = analyzeAvalanche(states_P_K3, states_Pprime_K3);
+
+        outFile << "Round DES0 DES1 DES2 DES3\n";
+        for (size_t i = 0; i < 17; i++) {
+            outFile << i << "\t" << diff_P_DES0[i] << "\t"
+                   << diff_P_DES1[i] << "\t"
+                   << diff_P_DES2[i] << "\t"
+                   << diff_P_DES3[i] << "\n";
         }
+        outFile << "\n";
+
+
+        vector<bitset<32>> states_P_Kprime;
+        vector<bitset<32>> states_P_Kprime1;
+        vector<bitset<32>> states_P_Kprime2;
+        vector<bitset<32>> states_P_Kprime3;
+
+        bitset<64> C_Kprime = DES0(P, K_prime, states_P_Kprime);
+        DES1(P, K_prime, states_P_Kprime1);
+        DES2(P, K_prime, states_P_Kprime2);
+        DES3(P, K_prime, states_P_Kprime3);
+
+        outFile << "P under K and K'\n";
+        outFile << "Ciphertext C: " << C << "\n";
+        outFile << "Ciphertext C': " << C_Kprime << "\n\n";
+
+        vector<int> diff_K_DES0 = analyzeAvalanche(states_P_K, states_P_Kprime);
+        vector<int> diff_K_DES1 = analyzeAvalanche(states_P_K1, states_P_Kprime1);
+        vector<int> diff_K_DES2 = analyzeAvalanche(states_P_K2, states_P_Kprime2);
+        vector<int> diff_K_DES3 = analyzeAvalanche(states_P_K3, states_P_Kprime3);
+
+        outFile << "Round DES0 DES1 DES2 DES3\n";
+        for (size_t i = 0; i < 17; i++) {
+            outFile << i << "\t" << diff_K_DES0[i] << "\t"
+                   << diff_K_DES1[i] << "\t"
+                   << diff_K_DES2[i] << "\t"
+                   << diff_K_DES3[i] << "\n";
+        }
+
+        inFile.close();
+        outFile.close();
+        return 0;
+    
     }
-
-    cout << "Bitset<64> inputBits:   " << inputBits << endl;
-    cout << "Bitset<64> fullKey:     " << inputKey << endl;
-    cout << "Bitset<56> strippedKey: " << actualKey << endl;
-
-
-
-    //dont know how much of this test output stuff we need to keep so im leaving it for now
-    unsigned long long testText = inputBits.to_ullong(); 
-
-    bitset<48> outputBits = expansionPermutationE(testText);
-    long roundKey = inputBits.to_ullong();
-    bitset<48> outputBits2 = xorWithRoundKey(outputBits, roundKey);
-        
-    bitset<64> ciphertext  = DES0(inputBits, actualKey);
-    bitset<64> ciphertext2 = DES0(inputBits2, actualKey);
-    bitset<64> ciphertext3 = DES0(inputBits, actualKey2);
-    bitset<64> ciphertext4 = DES0(inputBits2, actualKey2);
-
-    outputFile << "Initial Text:         " << inputBits << endl;
-    outputFile << "Key:                  " << actualKey << endl;
-    outputFile << " " << endl;
-    outputFile << "DES0" << endl;
-    outputFile << "Ciphertext P and K:   " << ciphertext << endl;
-    outputFile << "Ciphertext P' and K:  " << ciphertext2 << endl;
-    outputFile << "Ciphertext P and K':  " << ciphertext3 << endl;
-    outputFile << "Ciphertext P' and K': " << ciphertext4 << endl;
-    outputFile << " " << endl;
-
-    bitset<64> ciphertext5  = DES1(inputBits, actualKey);
-    bitset<64> ciphertext6 = DES1(inputBits2, actualKey);
-    bitset<64> ciphertext7 = DES1(inputBits, actualKey2);
-    bitset<64> ciphertext8 = DES1(inputBits2, actualKey2);
-
-    outputFile << "DES1" << endl;
-    outputFile << "Ciphertext P and K:   " << ciphertext5 << endl;
-    outputFile << "Ciphertext P' and K:  " << ciphertext6 << endl;
-    outputFile << "Ciphertext P and K':  " << ciphertext7 << endl;
-    outputFile << "Ciphertext P' and K': " << ciphertext8 << endl;
-    outputFile << " " << endl;
-
-    bitset<64> ciphertext9  = DES2(inputBits, actualKey);
-    bitset<64> ciphertext10 = DES2(inputBits2, actualKey);
-    bitset<64> ciphertext11 = DES2(inputBits, actualKey2);
-    bitset<64> ciphertext12 = DES2(inputBits2, actualKey2);
-
-    outputFile << "DES2" << endl;
-    outputFile << "Ciphertext P and K:   " << ciphertext9 << endl;
-    outputFile << "Ciphertext P' and K:  " << ciphertext10 << endl;
-    outputFile << "Ciphertext P and K':  " << ciphertext11 << endl;
-    outputFile << "Ciphertext P' and K': " << ciphertext12 << endl;
-    outputFile << " " << endl;
-
-    bitset<64> ciphertext13  = DES3(inputBits, actualKey);
-    bitset<64> ciphertext14 = DES3(inputBits2, actualKey);
-    bitset<64> ciphertext15 = DES3(inputBits, actualKey2);
-    bitset<64> ciphertext16 = DES3(inputBits2, actualKey2);
-
-    outputFile << "DES3" << endl;
-    outputFile << "Ciphertext P and K:   " << ciphertext13 << endl;
-    outputFile << "Ciphertext P' and K:  " << ciphertext14 << endl;
-    outputFile << "Ciphertext P and K':  " << ciphertext15 << endl;
-    outputFile << "Ciphertext P' and K': " << ciphertext16 << endl;
-    outputFile << " " << endl;
-
-    inputFile.close();
-    outputFile.close();
-    return 0;
-
+    catch (const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+        return 1;
+    }
 }
