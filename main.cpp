@@ -37,7 +37,7 @@ vector<int> analyzeAvalanche(const vector<bitset<32>>& states1, const vector<bit
 
 int main() {
     try {
-        ifstream inFile("testinput.txt");
+        ifstream inFile("input.txt");
         ofstream outFile("output.txt");
 
         string line;
