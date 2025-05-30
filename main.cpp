@@ -19,7 +19,6 @@
 
 using namespace std;
 
-
 bitset<64> readBinaryString(const string& str) {
     if (str.length() != 64) {
         throw runtime_error("Input string must be 64 bits long");
