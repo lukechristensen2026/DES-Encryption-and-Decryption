@@ -45,6 +45,8 @@ int main() {
 
         cout << "Bitset<64> inputBits:   " << P << endl;
         cout << "Bitset<64> fullKey:     " << K << endl;
+        cout << "Bitset<64> inputBit 2:   " << P_prime << endl;
+        cout << "Bitset<64> fullKey 2:     " << K_prime << endl;
 
 
 
