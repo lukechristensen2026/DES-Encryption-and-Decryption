@@ -5,6 +5,7 @@
 #include <bitset>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -436,6 +437,43 @@ bitset<64> DES3(const bitset<64>& plaintext, const bitset<64>& key, vector<bitse
         intermediateStates.push_back(R);
     }
     
+    bitset<64> combined;
+    for(int i = 0; i < 32; i++) {
+        combined[i] = L[i];
+        combined[i + 32] = R[i];
+    }
+    return finalPermutation(combined);
+}
+
+//With a few changes we can make decrypt functions
+//stackoverflow
+bitset<64> DES0Decrypt(const bitset<64>& plaintext, const bitset<64>& key) {
+    auto subkeys = generateSubkeys(key);
+    reverse(subkeys.begin(), subkeys.end());
+    bitset<64> state = initialPermutation(plaintext);
+    
+    bitset<32> L;
+    bitset<32> R;
+    for(int i = 0; i < 32; i++) {
+        L[i] = state[i + 32];
+        R[i] = state[i];
+    }
+    
+    //intermediateStates.push_back(R);
+    
+    for (int round = 0; round < 16; round++) {
+        bitset<32> prevR = R;
+        
+        bitset<48> expanded = expansionPermutationE(R);
+        bitset<48> xored = xorWithRoundKey(expanded, subkeys[round]);
+        bitset<32> substituted = applySBoxes(xored);
+        bitset<32> permuted = permutationP(substituted);
+        
+        R = L ^ permuted;
+        L = prevR;
+        
+        //intermediateStates.push_back(R);
+    }
     bitset<64> combined;
     for(int i = 0; i < 32; i++) {
         combined[i] = L[i];
