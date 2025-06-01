@@ -1,3 +1,5 @@
+//Decryption algorithm for our DES implementation
+////Written by: Luke Christensen c3533694 and Reviewed by: Lachlan Turner c3477306 Group 10
 #include <iostream>
 #include <bitset>
 #include <fstream>

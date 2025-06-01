@@ -1,3 +1,6 @@
+//Code to demonstrate the avalanche effect in DES encryption
+//Written by: Lachlan Turner c3477306 and Luke Christensen c3533694 Group 10
+
 #include <iostream>
 #include <bitset>
 #include <fstream>

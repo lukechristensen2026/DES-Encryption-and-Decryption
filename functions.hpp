@@ -1,4 +1,5 @@
-//
+//Functions for the DES algorithm, including key generation, encryption, and decryption.
+//Written by: Lachlan Turner c3477306 and Luke Christensen c3533694 Group 10
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
