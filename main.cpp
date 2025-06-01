@@ -23,6 +23,8 @@ vector<int> analyzeAvalanche(const vector<bitset<32>>& states1, const vector<bit
 
 int main() {
     try {
+        auto start = high_resolution_clock::now();
+        
         ifstream inFile("input.txt");
         ofstream outFile("output.txt");
 
@@ -42,6 +44,8 @@ int main() {
         outFile << "Plaintext P': " << P_prime << "\n";
         outFile << "Key K: " << K << "\n";
         outFile << "Key K': " << K_prime << "\n\n";
+
+        outFile << "\nTotal running time: " << duration.count() / 1000.0 << " seconds\n";
 
         cout << "Bitset<64> inputBits:   " << P << endl;
         cout << "Bitset<64> fullKey:     " << K << endl;
