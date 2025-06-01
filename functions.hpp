@@ -455,7 +455,7 @@ bitset<64> DES3(const bitset<64>& plaintext, const bitset<64>& key, vector<bitse
 
 
 //With a few changes we can make decrypt functions
-//stackoverflow
+//Geeks for Geeks was uses to assist my learning of vectors in c++
 bitset<64> DES0Decrypt(const bitset<64>& plaintext, const bitset<64>& key) {
     auto subkeys = generateSubkeys(key);
     reverse(subkeys.begin(), subkeys.end());
