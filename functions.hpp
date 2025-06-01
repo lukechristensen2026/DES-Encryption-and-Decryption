@@ -1,3 +1,4 @@
+//
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
@@ -72,7 +73,7 @@ const int PC2[48] = {
 
 //SBOX definition
 
-const int S_BOX[8][4][16] = {
+const int SBOX[8][4][16] = {
     { // S1
         {14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7},
         {0,15,7,4,14,2,13,1,10,6,12,11,9,5,3,8},
@@ -131,6 +132,8 @@ const int P[32] = {
     19, 13, 30, 6, 22, 11, 4, 25
 };
 
+
+//uses the e exapansion table to expand a 32 bit input to a 48 bit
 bitset<48> expansionPermutationE(const bitset<32>& input) {
     bitset<48> result;
     for (int i = 0; i < 48; i++) {
@@ -139,7 +142,7 @@ bitset<48> expansionPermutationE(const bitset<32>& input) {
     return result;
 }
 
-bitset<32> inverseExpansionPermutationE(const bitset<48> input) {
+bitset<32> inverseExpansionPermutationE(const bitset<48> input) {//the inverse of the expansion permutation E so it can be used in DES2
     bitset<32> output;
 
     for (int i = 1; i < 32; i++) {
@@ -156,20 +159,20 @@ bitset<32> inverseExpansionPermutationE(const bitset<48> input) {
     return output;
 }
 
-//XOR with a round key
+//XOR with a round key, just goes through the bitsets and XORS them
 bitset<48> xorWithRoundKey(const bitset<48>& input, const bitset<48>& key) {
     bitset<48> result;
     for (int i = 0; i < 48; i++) {
-        result[i] = input[i] ^ key[i]; //Simplified this, "^" performs xor
+        result[i] = input[i] ^ key[i]; 
     }
     return result;
 }
 
-//generate round keys
+//old subkey generation function, basically completely remade this further down
 vector<bitset<48>> generateRoundKeys(bitset<56> key) {
     bitset<48> simpleKey;
     for (int i = 0; i < 48; i++) {
-        simpleKey[47 - i] = key[55 - i]; // Just take the leftmost 48 bits
+        simpleKey[47 - i] = key[55 - i]; // Just takes the leftmost 48 bits
     }
 
     vector<bitset<48>> roundKeys(16, simpleKey); // same key for all rounds
@@ -177,7 +180,7 @@ vector<bitset<48>> generateRoundKeys(bitset<56> key) {
 }
 
 
-
+//general permutation function, was going to be used for FP and IP but we just made other fuinctions for those
 bitset<64> permute(bitset<64> input, const int* table, int size) {
     bitset<64> output;
     for (int i = 0; i < size; i++) {
@@ -187,7 +190,7 @@ bitset<64> permute(bitset<64> input, const int* table, int size) {
 }
 
 
-//S-boxes
+//applies the S-boxes to a 48 bit input, returns a 32 bit output
 bitset<32> applySBoxes(const bitset<48>& input) {
     bitset<32> output;
     int outputPos = 0;
@@ -196,19 +199,19 @@ bitset<32> applySBoxes(const bitset<48>& input) {
         int row = (input[47-6*i] << 1) | input[47-6*i-5];
         int col = (input[47-6*i-1] << 3) | (input[47-6*i-2] << 2) |
                  (input[47-6*i-3] << 1) | input[47-6*i-4];
-        
-        int value = S_BOX[i][row][col];
+        //does all of the bit manipulation to get the row and column for the S-box
+        int value = SBOX[i][row][col];
         
         for (int j = 0; j < 4; j++) {
             output[31-outputPos-j] = (value >> j) & 1;
         }
-        outputPos += 4;
+        outputPos += 4;//places the bits in the output bitset
     }
     
     return output;
 }
 
-//Permutation P
+//Permutation P applier function, probably could have just used permute but we made this one first
 bitset<32> permutationP(bitset<32> input) {
     bitset<32> output;
     for (int i = 0; i < 32; i++) {
@@ -216,7 +219,7 @@ bitset<32> permutationP(bitset<32> input) {
     }
     return output;
 }
-
+//unused functions, initially were planned to be used for the DES0,1,2,3 but we just redid them below
 bitset<32> fFunction(bitset<32> R, bitset<48> roundKey) {
     bitset<48> expanded = expansionPermutationE(R.to_ulong());
     bitset<48> xored = xorWithRoundKey(expanded, roundKey);
@@ -242,10 +245,9 @@ bitset<32> fFunction3(bitset<32> R, bitset<48> roundKey) {
     bitset<32> sboxOut = applySBoxes(xored);
     return sboxOut;
 }
-//this is the scaffold for the main function
 
 
-
+// Initial and Final Permutations, again we could have used the permute function but we made these first
 bitset<64> initialPermutation(const bitset<64>& input) {
     bitset<64> output;
     for (int i = 0; i < 64; i++) {
@@ -262,7 +264,9 @@ bitset<64> finalPermutation(const bitset<64>& input) {
     return output;
 }
 
-
+//The improved subkey generation function, this is the one we use in the DES functions and actually works properly
+//It generates 16 subkeys from a 64 bit key, using the PC1 and PC2 tables
+//and it outputs this as a vector of 48 bit subkeys
 vector<bitset<48>> generateSubkeys(const bitset<64>& key) {
     bitset<56> key56;
     for (int i = 0; i < 56; i++) {
@@ -307,7 +311,9 @@ vector<bitset<48>> generateSubkeys(const bitset<64>& key) {
 
 
 
-//I need to go back over this with comments but the main difference in each of these DES functions is I've added tracking for the avalanch effect and fixed up the initial and final permutations because we werent using them.
+//These DES functions essentially just implement each of the different functions we made above in the order specified in the doc
+//DES0 the full DES function with all the steps uses each of the functions we made above 
+//the rest of the DES functions are variations on this, with some steps removed or changed
 bitset<64> DES0(const bitset<64>& plaintext, const bitset<64>& key, vector<bitset<32>>& intermediateStates) {
     auto subkeys = generateSubkeys(key);
     bitset<64> state = initialPermutation(plaintext);
@@ -444,6 +450,8 @@ bitset<64> DES3(const bitset<64>& plaintext, const bitset<64>& key, vector<bitse
     }
     return finalPermutation(combined);
 }
+//Encryption functions end here, decryption starts below
+
 
 //With a few changes we can make decrypt functions
 //stackoverflow
