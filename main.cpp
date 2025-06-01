@@ -139,7 +139,7 @@ int main() {
         return 0;
     
     }
-    catch (const exception& e) {//error catching mostly for sebugging and ensuring the input is a correct size
+    catch (const exception& e) {//error catching mostly for debugging and ensuring the input is a correct size
         cerr << "Error: " << e.what() << endl;
         return 1;
     }

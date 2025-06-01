@@ -125,7 +125,7 @@ const int SBOX[8][4][16] = {
     }
 };
 
-// Permutation P
+//Array for Permutation P 
 const int P[32] = {
     16, 7, 20, 21, 29, 12, 28, 17,
     1, 15, 23, 26, 5, 18, 31, 10,
@@ -151,7 +151,7 @@ bitset<32> inverseExpansionPermutationE(const bitset<48> input) {//the inverse o
         //Removing duplicates
         for (int j = 0; j < 48; j++) {
             if (ExpandedSet[j] == i+1) {
-                output[31 - i] = input[47 - j]; // Adjusting bitset index
+                output[31 - i] = input[47 - j]; //Adjusting bitset index
                 break;
             }
         }
